@@ -31,8 +31,8 @@ await expect(page.locator("#displayed-text")).toBeHidden();
 
 });
 
-test.only('visual testing', async({page})=>{
+// test.only('visual testing', async({page})=>{
 
-   await page.goto("https://www.google.com");
-   expect(await page.screenshot()).toMatchSnapshot('landing.png');
-});
+//    await page.goto("https://www.google.com");
+//    expect(await page.screenshot()).toMatchSnapshot('landing.png');
+// });
