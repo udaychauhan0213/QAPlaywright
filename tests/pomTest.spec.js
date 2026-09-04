@@ -28,6 +28,7 @@ test(`Login Practice POM for: ${data.productName}`, async ({ page }) => {
     const orderThanksPage = poManager.getOrderThanksPage();
     await orderThanksPage.orderLastPage();
 })};
+//just testing
 
 customTest.only(`Login Practice POM`, async ({ page,testDataForOrder }) => {
 
