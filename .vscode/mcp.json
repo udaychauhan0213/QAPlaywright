@@ -2,7 +2,17 @@
   "servers": {
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp"]
+      "args": [
+        "@playwright/mcp"
+      ]
+    },
+    "playwright-test": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "playwright",
+        "run-test-mcp-server"
+      ]
     }
   }
 }
