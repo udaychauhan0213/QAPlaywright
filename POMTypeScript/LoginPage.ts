@@ -1,29 +1,28 @@
-import {Locator, Page} from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class LoginPage {
-  page:Page;
-  userName: Locator;
-  password: Locator;
-  signInButton: Locator;
+  private readonly page: Page;
+  private readonly userName: Locator;
+  private readonly password: Locator;
+  private readonly signInButton: Locator;
 
   constructor(page: Page) {
-    this.page = page; //since it's scope is local to this const inorder to use it outside of this constructor we do it this.page(same as all variable in here we created are class variable it will also work as them)
-    this.userName = page.locator("#userEmail");
-    this.password = page.locator("[type='password']");
-    this.signInButton = page.locator("#login"); //hence it is a class variable(signInButton)
+    this.page = page;
+    this.userName = page.locator('#userEmail');
+    this.password = page.locator('[type="password"]');
+    this.signInButton = page.locator('#login');
   }
 
-  async goTo(){
-    await this.page.goto("https://rahulshettyacademy.com/client");
+  async goTo(): Promise<void> {
+    await this.page.goto('https://rahulshettyacademy.com/client');
+    await expect(this.userName).toBeVisible();
   }
 
-  async validLogin(username: string, password: string) {
-    //when we call this method from our test file it will send these params
+  async validLogin(username: string, password: string): Promise<void> {
     await this.userName.fill(username);
     await this.password.fill(password);
     await this.signInButton.click();
-    await this.page.waitForLoadState("networkidle");
+
+    await expect(this.page.locator('.card-body').first()).toBeVisible();
   }
 }
-
-module.exports = { LoginPage }; //exporting login page to test file

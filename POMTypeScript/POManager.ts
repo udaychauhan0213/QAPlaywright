@@ -1,48 +1,26 @@
-// const { LoginPage } = require("./LoginPage");
-// const { DashboardPage } = require("./DashboardPage");
-// const { CartPage } = require("./CartPage");
-// const { OrderCardPage } = require("./OrderCardPage");
-// const { OrderThanksPage } = require("./OrderThanksPage");
-import {LoginPage} from './LoginPage';
-import {DashboardPage} from './DashboardPage';
-import {CartPage} from './CartPage';
-import {OrderCardPage} from './OrderCardPage';
-import {OrderThanksPage} from './OrderThanksPage';
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
+import { CartPage } from './CartPage';
+import { DashboardPage } from './DashboardPage';
+import { LoginPage } from './LoginPage';
+import { OrderCardPage } from './OrderCardPage';
+import { OrderThanksPage } from './OrderThanksPage';
 
 export class POManager {
+  readonly loginPage: LoginPage;
+  readonly dashboardPage: DashboardPage;
+  readonly orderThanksPage: OrderThanksPage;
 
-    page: Page;
-    loginPage: LoginPage;
-    dashboardPage: DashboardPage;
-    orderThanksPage: OrderThanksPage;
-    
-    constructor(page: Page) {
-        this.page = page;
-        this.loginPage = new LoginPage(this.page);
-        this.dashboardPage = new DashboardPage(this.page);
-        this.orderThanksPage = new OrderThanksPage(this.page);
-    }
+  constructor(private readonly page: Page) {
+    this.loginPage = new LoginPage(page);
+    this.dashboardPage = new DashboardPage(page);
+    this.orderThanksPage = new OrderThanksPage(page);
+  }
 
-    getLoginPage() {
-        return this.loginPage;
-    }
+  getCartPage(productName: string): CartPage {
+    return new CartPage(this.page, productName);
+  }
 
-    getDashboardPage() {
-        return this.dashboardPage;
-    }
-
-    getCartPage(productName: string) {
-        return new CartPage(this.page, productName);
-    }
-
-    getOrderCardPage(username: string) {
-        return new OrderCardPage(this.page, username);
-    }
-
-    getOrderThanksPage() {
-        return this.orderThanksPage;
-    }
+  getOrderCardPage(username: string): OrderCardPage {
+    return new OrderCardPage(this.page, username);
+  }
 }
-
-module.exports = { POManager };
