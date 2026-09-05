@@ -1,35 +1,33 @@
-import {Locator, Page} from '@playwright/test';
-
+import { expect, Locator, Page } from '@playwright/test';
 
 export class DashboardPage {
-  page: Page;
-  products: Locator;
-  productsText: Locator;
-  cart: Locator;
-  constructor(page: Page) {
-    this.page = page;
-    this.products = page.locator(".card-body");
-    this.productsText = page.locator(".card-body b");
-    this.cart = page.locator("[routerlink*='cart']");
+  private readonly products: Locator;
+  private readonly cart: Locator;
+
+  constructor(private readonly page: Page) {
+    this.products = page.locator('.card-body');
+    this.cart = page.locator('[routerlink*="cart"]');
   }
 
-  async searchProductAddCart(productName: string) {
-    const allTitle = await this.productsText.allTextContents();
-    console.log(allTitle);
-    const count = await this.products.count();
-    for (let i = 0; i < count; ++i) {
-      if (
-        (await this.products.nth(i).locator("b").textContent()) === productName) {
-        await this.products
-          .nth(i)
-          .getByRole("button", { name: "Add To Cart" })
-          .click();
-        break;
-      }
-    }
+  async searchProductAddCart(productName: string): Promise<void> {
+    const product = this.products.filter({
+      has: pageLocatorByText(this.page, 'b', productName),
+    });
+
+    await expect(product, `Product "${productName}" was not found`).toHaveCount(1);
+    await product.getByRole('button', { name: /add to cart/i }).click();
   }
-  async navigateToCart() {
+
+  async navigateToCart(): Promise<void> {
     await this.cart.click();
+    await expect(this.page).toHaveURL(/cart/);
   }
 }
-module.exports = { DashboardPage };
+
+function pageLocatorByText(page: Page, selector: string, text: string): Locator {
+  return page.locator(selector).filter({ hasText: new RegExp(`^${escapeRegExp(text)}$`) });
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

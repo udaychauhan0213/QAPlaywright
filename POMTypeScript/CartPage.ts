@@ -1,25 +1,20 @@
-import {expect, Locator} from '@playwright/test';
-import { Page } from 'playwright';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class CartPage {
+  private readonly product: Locator;
+  private readonly checkoutButton: Locator;
 
-  page: Page
-  cartPageWait: Locator;
-  productTextVisible: Locator;
-  checkOutButton: Locator;
+  constructor(private readonly page: Page, productName: string) {
+    this.product = page.locator('h3').filter({ hasText: productName });
+    this.checkoutButton = page.getByRole('button', { name: /checkout/i });
+  }
 
-  constructor(page: Page, productName: string) {
-    this.page = page;
-    this.cartPageWait = page.locator("div li").first();
-    this.productTextVisible = page.locator("h3:has-text('" + productName + "')");
-    this.checkOutButton = page.locator(".btn.btn.btn-primary").nth(2);
+  async cartVisibilityTexts(): Promise<void> {
+    await expect(this.product).toBeVisible();
   }
-  async cartVisibilityTexts() {
-    await this.cartPageWait.waitFor();
-    await expect(this.productTextVisible).toBeVisible();
-  }
-  async cartCheckOut() {
-    await this.checkOutButton.click();
+
+  async cartCheckOut(): Promise<void> {
+    await this.checkoutButton.click();
+    await expect(this.page.locator('[placeholder="Select Country"]')).toBeVisible();
   }
 }
-module.exports = { CartPage };
